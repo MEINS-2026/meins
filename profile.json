@@ -1,12 +1,9 @@
 {
   "name": "MEINS",
-  "title": "",
   "title": "Creator",
   "bio": "グループ系ゲーム実況🎮️MEINSの公式ページです!",
   "avatar": "icon.jpg",
-  
   "avatar_bg": "#ffffff", 
-
   "hero_bg_type": "color",
   "hero_bg_color": "linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)",
   "hero_bg_image": "",
