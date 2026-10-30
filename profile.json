@@ -1,20 +1,36 @@
 {
   "name": "MEINS",
-  "title": "Creator",
   "bio": "グループ系ゲーム実況🎮️MEINSの公式ページです!",
+  "title": "Creator",
   "avatar": "icon.jpg",
-  "avatar_bg": "#ffffff", 
+  "avatar_bg": "#ffffff",
   "hero_bg_type": "color",
   "hero_bg_color": "linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)",
   "hero_bg_image": "",
 
   "header_links": [
-    { "name": "Home", "url": "index.html", "icon": "fa-solid fa-house" },
-    { "name": "Posts", "url": "posts.html", "icon": "fa-solid fa-feather-pointed" }
+    { 
+      "name": "Home",
+      "url": "index.html",
+      "icon": "fa-solid fa-house"
+    },
+    { 
+      "name": "Posts",
+      "url": "posts.html",
+      "icon": "fa-solid fa-feather-pointed"
+    }
   ],
   "socials": [
-    { "name": "YouTube", "url": "https://www.youtube.com/@MEINS-2026/", "icon": "fa-brands fa-youtube" },
-    { "name": "Twitter / X", "url": "https://x.com/MEINSChannel", "icon": "fa-brands fa-twitter" }
+    { 
+      "name": "YouTube",
+      "url": "https://www.youtube.com/@MEINS-2026/",
+      "icon": "fa-brands fa-youtube"
+    },
+    { 
+      "name": "Twitter / X", 
+      "url": "https://x.com/MEINSChannel", 
+      "icon": "fa-brands fa-twitter"
+    }
   ]
   "github": {
     "owner": "MEINS-2026",
