@@ -80,34 +80,81 @@ async function loadProfile() {
 
 // --- 3. posts/ フォルダを自動スキャンして .md ファイルを回収する ---
 async function fetchAllPosts() {
-    let slugs = [];
+    let posts = [];
 
+    // --- 1. まずローカルサーバーのディレクトリリスティングを試す（ローカルデバッグ用） ---
     try {
-        // ローカルサーバーのディレクトリリスティング機能を利用
         const res = await fetch("posts/");
         if (res.ok) {
             const htmlText = await res.text();
             const doc = new DOMParser().parseFromString(htmlText, "text/html");
+            let slugs = [];
             
             doc.querySelectorAll("a").forEach(a => {
                 let href = a.getAttribute("href");
                 if (href && href.endsWith(".md")) {
-                    // ファイル名（拡張子なし）を綺麗に抽出
                     let cleanName = href.split("/").pop().replace(".md", "");
                     if (cleanName && !slugs.includes(cleanName)) {
                         slugs.push(cleanName);
                     }
                 }
             });
+
+            if (slugs.length > 0) {
+                // スキャンできたファイルからタイトルや画像などのデータを構築
+                posts = await Promise.all(slugs.map(async (slug) => {
+                    try {
+                        const mdRes = await fetch(`posts/${slug}.md`);
+                        if (!mdRes.ok) return null;
+                        const text = await mdRes.text();
+                        
+                        const titleMatch = text.match(/^#\s+(.*)$/m);
+                        const title = titleMatch ? titleMatch[1] : slug;
+                        
+                        const imgMatch = text.match(/!\[.*?\]\((.*?)\)/);
+                        let image = imgMatch ? imgMatch[1] : null;
+                        if (image && !image.startsWith("http")) {
+                            image = `posts/${image}`;
+                        }
+
+                        return { slug, title, image };
+                    } catch {
+                        return null;
+                    }
+                }));
+                posts = posts.filter(p => p !== null);
+            }
         }
     } catch (err) {
-        console.warn("自動スキャンに失敗しました:", err);
+        console.log("ローカルスキャン非対応環境です。posts.jsonの読み込みに切り替えます。");
     }
 
-    // 万が一スキャンできなかった場合のフォールバック（あなたの画像の "firest" を救済）
-    if (slugs.length === 0) {
-        slugs = ["firest"];
+    // --- 2. ローカルスキャンで取れなかった場合（GitHub Pagesなど）、posts.json を読みに行く ---
+    if (posts.length === 0) {
+        try {
+            const jsonRes = await fetch("posts/posts.json");
+            if (jsonRes.ok) {
+                const jsonPosts = await jsonRes.json();
+                posts = jsonPosts.map(p => ({
+                    slug: p.slug,
+                    title: p.title,
+                    image: p.image || null
+                }));
+            }
+        } catch (err) {
+            console.warn("posts.jsonの取得にも失敗しました:", err);
+        }
     }
+
+    // --- 3. それでもダメな場合の最終フォールバック ---
+    if (posts.length === 0) {
+        posts = [
+            { slug: "firest", title: "最初のテスト投稿", image: null }
+        ];
+    }
+
+    return posts;
+}
 
     // 各 .md ファイルのデータを並行して取得
     const posts = await Promise.all(slugs.map(async (slug) => {
